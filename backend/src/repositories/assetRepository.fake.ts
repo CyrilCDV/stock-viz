@@ -44,29 +44,29 @@ const seed: Asset[] = [
 export class FakeAssetRepository implements AssetRepository {
   private assets: Asset[] = [...seed];
 
-  async findAll(): Promise<Asset[]> {
-    return [...this.assets];
+  findAll(): Promise<Asset[]> {
+    return Promise.resolve([...this.assets]);
   }
 
-  async findById(id: string): Promise<Asset | null> {
-    return this.assets.find((a) => a.id === id) ?? null;
+  findById(id: string): Promise<Asset | null> {
+    return Promise.resolve(this.assets.find((a) => a.id === id) ?? null);
   }
 
-  async findBySymbol(symbol: string): Promise<Asset | null> {
-    return this.assets.find((a) => a.symbol === symbol) ?? null;
+  findBySymbol(symbol: string): Promise<Asset | null> {
+    return Promise.resolve(this.assets.find((a) => a.symbol === symbol) ?? null);
   }
 
-  async create(payload: CreateAssetPayload): Promise<Asset> {
+  create(payload: CreateAssetPayload): Promise<Asset> {
     const now = new Date();
     const asset: Asset = { id: randomUUID(), ...payload, createdAt: now, updatedAt: now };
     this.assets.push(asset);
-    return asset;
+    return Promise.resolve(asset);
   }
 
-  async deleteById(id: string): Promise<boolean> {
+  deleteById(id: string): Promise<boolean> {
     const index = this.assets.findIndex((a) => a.id === id);
-    if (index === -1) return false;
+    if (index === -1) return Promise.resolve(false);
     this.assets.splice(index, 1);
-    return true;
+    return Promise.resolve(true);
   }
 }
