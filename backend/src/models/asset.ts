@@ -1,10 +1,4 @@
-export type AssetType =
-  | 'stock'
-  | 'etf'
-  | 'crypto'
-  | 'bond'
-  | 'index'
-  | 'commodity';
+export type AssetType = 'stock' | 'etf' | 'crypto' | 'bond' | 'index' | 'commodity';
 
 export interface Asset {
   /** Internal unique identifier (UUID) */
