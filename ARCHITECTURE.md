@@ -11,11 +11,12 @@
 | Layer | Technology | Rationale |
 |---|---|---|
 | Web (frontend + BFF) | Next.js (React) | SSR, Server Components, UI-specific API aggregation |
-| Backend | Node.js — Fastify or Express (TBD) | Business logic, DB access, generic REST API |
+| Backend | Node.js + Hono | Lightweight, TypeScript-native REST API — see [ADR 0001](docs/adr/0001-backend-framework.md) |
 | Database | PostgreSQL | Reliable time-series queries, OHLCV aggregations |
+| Migrations | dbmate | Language-agnostic, plain SQL, Docker-friendly — see [ADR 0002](docs/adr/0002-database-migration-tool.md) |
 | Reverse proxy | Caddy or nginx (TBD) | Caddy: automatic HTTPS; nginx: more control and wider adoption |
 | Containerization | Docker Compose | Single-server deployment, simple orchestration |
-| ORM / queries | Prisma or Drizzle (TBD) | Type-safe queries, schema migrations |
+| ORM / queries | TBD | Type-safe queries |
 | Charting | Lightweight Charts (TradingView OSS) | Purpose-built for financial data |
 | Data ingestion | Custom Node.js service | Fetches stock data from external API on a schedule |
 
@@ -33,16 +34,17 @@ stock-viz/
 │   │   ├── components/         # React components (charts, UI)
 │   │   └── lib/                # Backend API client, utilities
 │   └── package.json
-├── backend/                    # Node.js API server (Fastify or Express)
+├── backend/                    # Node.js + Hono API server
 │   ├── src/
 │   │   ├── routes/             # API route handlers
 │   │   ├── services/           # Business logic
-│   │   └── db/                 # DB client, repositories
+│   │   └── repositories/       # Data access (fake or DB-backed)
 │   └── package.json
 ├── ingestion/                  # Stock data fetcher
 │   └── package.json
 ├── db/
-│   └── migrations/             # SQL migration files
+│   ├── migrations/             # dbmate SQL migration files
+│   └── schema.sql              # Auto-generated full schema snapshot
 ├── docker-compose.yml          # Development
 ├── docker-compose.prod.yml     # Production overrides
 ├── .env.example
@@ -89,13 +91,18 @@ Decision can be deferred until deployment setup begins.
 - Does not connect to PostgreSQL directly
 
 ### Backend
-- Standalone Node.js service (Fastify or Express)
+- Standalone Node.js service built with **Hono**
 - Owns business logic and all database access
 - Exposes a generic REST API consumed by the BFF (and potentially other clients in the future)
 
 ### PostgreSQL (db)
-- Stores historical OHLCV stock data
+- Stores historical OHLCV stock data and asset metadata
 - Data persisted via a named Docker volume
+- Schema managed by **dbmate** migrations in `db/migrations/`
+
+### dbmate (migrate)
+- Short-lived Docker Compose service that applies pending migrations on startup then exits
+- Runs after `db` is healthy, before `backend` starts
 
 ### Ingestion
 - Standalone Node.js process

@@ -1,7 +1,39 @@
 services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: stockviz
+      POSTGRES_USER: stockviz
+      POSTGRES_PASSWORD: stockviz
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stockviz"]
+      interval: 5s
+      retries: 5
+
+  migrate:
+    image: ghcr.io/amacneil/dbmate:2
+    command: up
+    environment:
+      DATABASE_URL: postgres://stockviz:stockviz@db:5432/stockviz?sslmode=disable
+    volumes:
+      - ./db/migrations:/db/migrations:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
   backend:
     build: ./backend
     ports:
       - "3001:3001"
     environment:
       PORT: 3001
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  db_data:
