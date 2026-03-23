@@ -57,9 +57,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "exchanges_code_key": {
-          "columns": [
-            "code"
-          ],
+          "columns": ["code"],
           "nullsNotDistinct": false,
           "name": "exchanges_code_key"
         }
@@ -144,12 +142,8 @@
           "tableFrom": "assets",
           "tableTo": "exchanges",
           "schemaTo": "public",
-          "columnsFrom": [
-            "exchange_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["exchange_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -158,12 +152,8 @@
           "tableFrom": "assets",
           "tableTo": "currencies",
           "schemaTo": "public",
-          "columnsFrom": [
-            "currency_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["currency_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -172,12 +162,8 @@
           "tableFrom": "assets",
           "tableTo": "sectors",
           "schemaTo": "public",
-          "columnsFrom": [
-            "sector_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["sector_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -185,9 +171,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "assets_symbol_key": {
-          "columns": [
-            "symbol"
-          ],
+          "columns": ["symbol"],
           "nullsNotDistinct": false,
           "name": "assets_symbol_key"
         }
@@ -224,9 +208,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "currencies_code_key": {
-          "columns": [
-            "code"
-          ],
+          "columns": ["code"],
           "nullsNotDistinct": false,
           "name": "currencies_code_key"
         }
@@ -257,9 +239,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "sectors_name_key": {
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "nullsNotDistinct": false,
           "name": "sectors_name_key"
         }
@@ -272,14 +252,7 @@
   "enums": {
     "public.asset_type": {
       "name": "asset_type",
-      "values": [
-        "stock",
-        "etf",
-        "crypto",
-        "bond",
-        "index",
-        "commodity"
-      ],
+      "values": ["stock", "etf", "crypto", "bond", "index", "commodity"],
       "schema": "public"
     }
   },
