@@ -4,3 +4,8 @@ coverage/
 *.env
 .env*
 !.env.example
+
+# Drizzle introspected files — auto-generated, do not edit
+backend/src/db/schema.ts
+backend/src/db/relations.ts
+backend/src/db/meta/

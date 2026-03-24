@@ -10,9 +10,23 @@ jobs:
   backend:
     name: Backend
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: stockviz
+          POSTGRES_USER: stockviz
+          POSTGRES_PASSWORD: stockviz
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    env:
+      DATABASE_URL: postgres://stockviz:stockviz@localhost:5432/stockviz?sslmode=disable
 
     steps:
       - uses: actions/checkout@v4
@@ -23,12 +37,23 @@ jobs:
           cache: npm
           cache-dependency-path: backend/package-lock.json
 
+      - uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+
       - run: npm ci
+        working-directory: backend
 
-      - run: npm run lint
+      - name: Install dbmate
+        run: |
+          curl -fsSL -o /usr/local/bin/dbmate https://github.com/amacneil/dbmate/releases/latest/download/dbmate-linux-amd64
+          chmod +x /usr/local/bin/dbmate
 
-      - run: npm run format -- --check
+      - name: Run migrations
+        run: dbmate up
 
-      - run: npm run build
+      - run: task check
 
-      - run: npm run test
+      - run: task build
+
+      - run: task test
