@@ -1,0 +1,30 @@
+version: '3'
+
+tasks:
+  # Work tasks — environment-agnostic, called by CI and locally
+  build:
+    desc: Build the backend
+    cmds:
+      - cd backend && npm run build
+
+  test:
+    desc: Run backend tests
+    cmds:
+      - cd backend && npm test
+
+  check:
+    desc: Lint and check formatting
+    cmds:
+      - cd backend && npm run check
+
+  clean:
+    desc: Remove build artifacts and generated files
+    cmds:
+      - cd backend && npm run clean
+
+  # Local development — spins up the environment then starts the server
+  dev:
+    desc: Start database and backend in development mode
+    cmds:
+      - docker compose up db migrate --wait
+      - cd backend && npm run dev
