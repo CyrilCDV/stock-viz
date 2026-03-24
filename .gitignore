@@ -9,3 +9,4 @@ coverage/
 backend/src/db/schema.ts
 backend/src/db/relations.ts
 backend/src/db/meta/
+backend/src/db/*.sql

@@ -22,9 +22,17 @@ tasks:
     cmds:
       - cd backend && npm run clean
 
-  # Local development — spins up the environment then starts the server
+  # Local tasks — spin up the environment before running
+  build:local:
+    desc: Start database, run migrations, and build (generates schema.ts)
+    cmds:
+      - docker compose up db --wait
+      - docker compose run --rm migrate
+      - task build
+
   dev:
     desc: Start database and backend in development mode
     cmds:
-      - docker compose up db migrate --wait
+      - docker compose up db --wait
+      - docker compose run --rm migrate
       - cd backend && npm run dev
