@@ -1,19 +1,18 @@
 version: '3'
 
 tasks:
-  # Work tasks — environment-agnostic, called by CI and locally
   build:
-    desc: Build the backend
+    desc: Compile TypeScript
     cmds:
       - cd backend && npm run build
 
   test:
-    desc: Run backend tests
+    desc: Run backend unit tests
     cmds:
       - cd backend && npm test
 
   check:
-    desc: Lint and check formatting
+    desc: Lint and format check
     cmds:
       - cd backend && npm run check
 
@@ -22,17 +21,22 @@ tasks:
     cmds:
       - cd backend && npm run clean
 
-  # Local tasks — spin up the environment before running
-  build:local:
-    desc: Start database, run migrations, and build (generates schema.ts)
-    cmds:
-      - docker compose up db --wait
-      - docker compose run --rm migrate
-      - task build
-
   dev:
     desc: Start database and backend in development mode
     cmds:
-      - docker compose up db --wait
-      - docker compose run --rm migrate
+      - docker compose up db-ready --wait
       - cd backend && npm run dev
+
+  e2e:
+    desc: Start the full stack and run end-to-end tests
+    cmds:
+      - docker compose up db-ready --wait
+      - docker compose -f docker-compose.yml -f e2e/docker-compose.yml build --build-arg CACHE_BUST=$(date +%s) backend seed e2e
+      - docker compose -f docker-compose.yml -f e2e/docker-compose.yml run --rm e2e
+
+  debug:
+    desc: Start database and backend with Node.js debugger on port 9229
+    cmds:
+      - docker compose up db-ready --wait
+      - docker compose -f docker-compose.yml -f docker-compose.debug.yml build --build-arg CACHE_BUST=$(date +%s) backend
+      - docker compose -f docker-compose.yml -f docker-compose.debug.yml up backend

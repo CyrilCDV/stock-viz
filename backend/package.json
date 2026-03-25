@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "drizzle-kit introspect && sed -i \"s|from \\\"./schema\\\"|from \\\"./schema.js\\\"|g\" src/db/relations.ts && tsc",
+    "build": "tsc",
     "start": "node dist/index.js",
     "check": "npm run lint && npm run format -- --check",
     "lint": "eslint src",
@@ -14,7 +14,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "clean": "rm -rf dist src/db/schema.ts src/db/relations.ts src/db/meta src/db/*.sql",
-    "db:introspect": "drizzle-kit introspect"
+    "db:introspect": "drizzle-kit introspect && sed -i \"s|from \\\"./schema\\\"|from \\\"./schema.js\\\"|g\" src/db/relations.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.11",

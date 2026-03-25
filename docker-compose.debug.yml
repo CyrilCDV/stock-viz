@@ -1,0 +1,6 @@
+services:
+  backend:
+    build:
+      target: debug
+    ports:
+      - "9229:9229"
