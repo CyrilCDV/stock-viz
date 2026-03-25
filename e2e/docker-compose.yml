@@ -1,0 +1,23 @@
+services:
+  seed:
+    build: e2e
+    command: npm run seed
+    environment:
+      DATABASE_URL: postgres://stockviz:stockviz@db:5432/stockviz?sslmode=disable
+    depends_on:
+      db-ready:
+        condition: service_healthy
+
+  backend:
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+
+  e2e:
+    build: e2e
+    environment:
+      BACKEND_URL: http://backend:3001
+      DATABASE_URL: postgres://stockviz:stockviz@db:5432/stockviz?sslmode=disable
+    depends_on:
+      backend:
+        condition: service_healthy
