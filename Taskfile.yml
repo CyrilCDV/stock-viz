@@ -1,41 +1,45 @@
-version: '3'
+version: "3"
+
+env:
+  UID:
+    sh: id -u
+  GID:
+    sh: id -g
 
 tasks:
-  build:
-    desc: Introspect database schema and compile TypeScript
+  ci:
+    desc: Full CI pipeline
     cmds:
-      - defer: docker compose down
+      - defer: docker compose down --remove-orphans
       - docker compose up db-ready --wait
-      - cd backend && npm run db:introspect
-      - cd backend && npm run build
+      - docker compose run --rm dev-tools npm run db:introspect
+      - docker compose run --rm dev-tools npm run check
+      - docker compose run --rm dev-tools npm run build
+      - docker compose run --rm dev-tools npm test
+
+  build:
+    desc: Build overall project
+    cmds:
+      - docker compose up db-ready --wait
+      - docker compose run --rm dev-tools sh -c "npm run db:introspect && npm run build"
 
   test:
-    desc: Run backend unit tests
+    desc: Run checks and tests
     cmds:
-      - cd backend && npm test
-
-  check:
-    desc: Lint and format check
-    cmds:
-      - cd backend && npm run check
+      - docker compose run --rm dev-tools sh -c "npm run check && npm test"
+      - docker compose -f docker-compose.yml -f e2e/docker-compose.yml run --rm e2e
 
   clean:
     desc: Remove build artifacts and generated files
     cmds:
+      - docker compose down --remove-orphans
       - cd backend && npm run clean
 
   dev:
     desc: Start database and backend in development mode
     cmds:
       - docker compose up db-ready --wait
-      - cd backend && npm run dev
-
-  e2e:
-    desc: Start the full stack and run end-to-end tests
-    cmds:
-      - docker compose up db-ready --wait
-      - docker compose -f docker-compose.yml -f e2e/docker-compose.yml build --build-arg CACHE_BUST=$(date +%s) backend seed e2e
-      - docker compose -f docker-compose.yml -f e2e/docker-compose.yml run --rm e2e
+      - docker compose run --rm --service-ports dev-tools npm run dev
 
   debug:
     desc: Start database and backend with Node.js debugger on port 9229

@@ -13,6 +13,6 @@ export default tseslint.config(
   },
   prettier,
   {
-    ignores: ['dist/'],
+    ignores: ['dist/', 'src/db/schema.ts', 'src/db/relations.ts', 'src/db/meta/'],
   },
 );
