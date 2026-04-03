@@ -1,3 +1,6 @@
 node_modules/
 dist/
 coverage/
+src/db/schema.ts
+src/db/relations.ts
+src/db/meta/
